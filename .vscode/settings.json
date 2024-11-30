@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "stdlib.h": "c",
-        "typeinfo": "c"
+        "typeinfo": "c",
+        "string.h": "c",
+        "vfs.h": "c"
     }
 }
