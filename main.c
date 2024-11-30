@@ -35,20 +35,40 @@ int create_file(const char *filename) {
 }
 
 int open_file(const char *filename, const char mode, char *content) {
-    char isfile_found = 0;
-    for (int i=0; i<=count_f;) {
+
+    for (int i = 0; i < count_f; i++) {
         if (strcmp(vfs[i].file.name, filename) == 0) {
-            vfs[i].file.content = malloc(strlen(content) + 1);
-            strcpy(vfs[i].file.content, content);
-            isfile_found = 1;
+            if (mode == 'w') {
+
+                if (vfs[i].file.content != NULL) {
+                    free(vfs[i].file.content);
+                }
+
+                vfs[i].file.content = malloc(strlen(content) + 1);
+                strcpy(vfs[i].file.content, content);
+
+            } else if (mode == 'r') {
+                if (vfs[i].file.content != NULL) {
+                    printf("%s", vfs[i].file.content);
+                } else {
+                    printf("File is empty.\n");
+                }
+            } else if (mode == 'a') {
+                 if (vfs[i].file.content != NULL) {
+                    vfs[i].file.content = realloc(vfs[i].file.content, strlen(vfs[i].file.content) + strlen(content)+1);
+                     strcat(vfs[i].file.content, content);
+                } else {
+                    vfs[i].file.content = realloc(vfs[i].file.content, strlen(vfs[i].file.content) + strlen(content)+1);
+
+                    strcpy(vfs[i].file.content, content);
+                }
+            }
+            return 0;
         }
-        i++;
     }
-    if (!isfile_found) {
-        printf("%s", "File not found");
-        return -1;
-    }
-    return 0;
+
+    printf("File not found\n");
+    return -1;
 }
 
 int main() {
@@ -56,11 +76,11 @@ int main() {
     create_file("a1.txt");
     create_file("a2.txt");
     create_file("a3.txt");
-
-    for (int i=0; i<=count_f;) {
-        printf("%s\n", vfs[i].file.name);
-        i++;
-    }
+    open_file("a3.txt", 'w', "\nPRIVET PEOPLE");
+    open_file("a3.txt", 'r', NULL);
+    open_file("a3.txt", 'a', " NEW INFO");
+    open_file("a3.txt", 'r', NULL);
+    printf("%s\n", vfs[2].file.content);
     return 0;
 }
 
