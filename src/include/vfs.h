@@ -32,4 +32,4 @@ char *vfs_read_file(const char *filename, VirtualFileSystem *vfs);
 int vfs_get_file_index(const char *filename, VirtualFileSystem *vfs);
 int vfs_write_file(const char *filename, const char *content, int mode, VirtualFileSystem *vfs);
 int get_file_info(const char *filename, VirtualFileSystem *vfs);
-// int get_file_info_index(int file_index, VirtualFileSystem *vfs);
+char *get_file_index_info(int file_index, VirtualFileSystem *vfs);
