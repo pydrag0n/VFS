@@ -1,0 +1,7 @@
+testfile1.txt     | Dec  2 2024  01:08 | Dec  2 2024  01:08 | Dec  2 2024  01:08 | 37
+testfile2.txt     | Dec  2 2024  01:08 | Dec  2 2024  01:08 | Dec  2 2024  01:08 | 37
+testfile1.txt     | Dec  2 2024  01:08 | Dec  2 2024  01:08 | Dec  2 2024  01:08 | 37
+testfile2.txt     | Dec  2 2024  01:08 | Dec  2 2024  01:08 | Dec  2 2024  01:08 | 37
+Content of testfile1.txt: This is the content of testfile1.txt
+Content of testfile2.txt: This is the content of testfile2.txt
+All tests passed successfully

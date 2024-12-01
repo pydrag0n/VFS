@@ -1,6 +1,3 @@
-/*
-    функции для работы с файлами
-*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,11 +7,12 @@
 #include "include/vfs.h"
 
 
-
-char * _vfs_get_datetime() {
+char *vfs_get_datetime()
+{
         int date_size = 256;
         char *datetime = malloc(date_size);
-        if (datetime == NULL) {
+        if (datetime == NULL)
+        {
             return NULL;
         }
 
@@ -22,23 +20,37 @@ char * _vfs_get_datetime() {
         struct tm *timeinfo;
         time(&rawtime);
         timeinfo = localtime(&rawtime);
-
-        sprintf(datetime, "%02d-%02d-%04d %02d:%02d:%02d",
-                timeinfo->tm_mday,
-                timeinfo->tm_mon + 1,
-                timeinfo->tm_year + 1900,
-                timeinfo->tm_hour,
-                timeinfo->tm_min,
-                timeinfo->tm_sec
-                );
+        sprintf(datetime, "%s  %02d:%02d", __DATE__, timeinfo->tm_hour,  timeinfo->tm_min);
 
         return datetime;
 }
 
-
-long _get_file_size(int file_index, VirtualFileSystem *vfs)
+char *vfs_get_file_name(int file_index, VirtualFileSystem *vfs)
 {
-    return vfs->file[file_index].metadata.size;
+    if (file_index < vfs->count)
+    {
+        return vfs->file[file_index].name;
+    }
+    return NULL;
+}
+
+long vfs_get_file_size(int file_index, VirtualFileSystem *vfs)
+{
+    if (file_index < vfs->count)
+    {
+        return vfs->file[file_index].metadata.size;
+    }
+    return -1;
+}
+
+char *vfs_get_file_content(int file_index, VirtualFileSystem *vfs)
+{
+    char *content = vfs->file[file_index].content;
+    if (file_index < vfs->count && content != NULL)
+    {
+        return content;
+    }
+    return NULL;
 }
 
 
@@ -59,15 +71,15 @@ int vfs_get_file_index(const char *filename, VirtualFileSystem *vfs)
 
 int vfs_create_file(const char *filename, VirtualFileSystem *vfs)
 {
-    if (vfs_get_file_index(filename, vfs) > 0) {
-        printf("File already exists %s\n", filename);
-        return -1;
+
+    if (vfs_get_file_index(filename, vfs) > 0)
+    {
+        return -1; // File already exists
     }
 
     if (vfs->count >= MAX_FILES)
     {
-        printf("%s\n", "Maximum file limit reached");
-        return -1;
+        return -1; // Maximum file limit reached
     }
 
     vfs->file[vfs->count].name = malloc(strlen(filename) + 1);
@@ -76,61 +88,64 @@ int vfs_create_file(const char *filename, VirtualFileSystem *vfs)
     {
         return -1;
     }
-    // char datetime[256];
-    // strcpy(datetime, );
+
     strcpy(vfs->file[vfs->count].name, filename);
     vfs->file[vfs->count].content = NULL;
 
-    vfs->file[vfs->count].metadata.create_date = malloc(100);
-    vfs->file[vfs->count].metadata.change_date = malloc(100);
-    vfs->file[vfs->count].metadata.open_date = malloc(100);
-    char *datetime_str = _vfs_get_datetime();
+    vfs->file[vfs->count].metadata.create_date = malloc(256);
+    vfs->file[vfs->count].metadata.change_date = malloc(256);
+    vfs->file[vfs->count].metadata.open_date = malloc(256);
 
-    if (datetime_str != NULL) {
-        strcpy(vfs->file[vfs->count].metadata.open_date, datetime_str);
+    char *datetime_str = vfs_get_datetime();
+
+    if (datetime_str != NULL)
+    {
+        strcpy(vfs->file[vfs->count].metadata.create_date, datetime_str);
         strcpy(vfs->file[vfs->count].metadata.change_date, datetime_str);
+        strcpy(vfs->file[vfs->count].metadata.open_date, datetime_str);
+        free(datetime_str);
     }
 
-    strcpy(vfs->file[vfs->count].metadata.create_date, _vfs_get_datetime());
-    strcpy(vfs->file[vfs->count].metadata.change_date, _vfs_get_datetime());
-    strcpy(vfs->file[vfs->count].metadata.open_date, _vfs_get_datetime());
-
-    vfs->file[vfs->count].metadata.size = 0;
+    vfs->file[vfs->count].metadata.size = DEFAULT_FILE_SIZE;
 
     vfs->count++;
 
     return 0;
+
 }
 
 
 char *vfs_read_file(const char *filename, VirtualFileSystem *vfs)
 {
     int file_index = vfs_get_file_index(filename, vfs);
-    if (file_index >= 0)
+    if (file_index >= 0 && strcmp(vfs->file[file_index].name, filename) == 0)
     {
-        if (strcmp(vfs->file[file_index].name, filename) == 0)
+        if (vfs->file[file_index].content == NULL)
         {
-            if (vfs->file[file_index].content == NULL)
-            {
-                printf("%s", "File is empty\n"); // debug
-                return NULL;
-            }
-
-            char *datetime_str = _vfs_get_datetime();
-            if (datetime_str != NULL) {
-                strcpy(vfs->file[file_index].metadata.open_date, datetime_str);
-            }
-
-            return vfs->file[file_index].content;
+            printf("%s", "File is empty\n"); // debug
+            return NULL;
         }
+
+        char *datetime_str = vfs_get_datetime();
+
+        if (datetime_str != NULL)
+        {
+            strcpy(vfs->file[file_index].metadata.open_date, datetime_str);
+        }
+
+        return vfs->file[file_index].content;
     }
 
     return NULL;
+
 }
 
 
-int vfs_write_file(const char *filename, const char *content, int mode, VirtualFileSystem *vfs)
+int vfs_write_file(const char *filename,
+                    const char *content,
+                    char mode, VirtualFileSystem *vfs)
 {
+
     /*
      *   mode: 1  = write
      *   mode: 2  = append
@@ -151,10 +166,7 @@ int vfs_write_file(const char *filename, const char *content, int mode, VirtualF
 
             vfs->file[file_index].content = malloc(strlen(content) + 1);
 
-            if (vfs->file[file_index].content == NULL)
-            {
-                return -1;
-            }
+            if (vfs->file[file_index].content == NULL) {  return -1;  }
 
             strcpy(vfs->file[file_index].content, content);
             break;
@@ -166,20 +178,23 @@ int vfs_write_file(const char *filename, const char *content, int mode, VirtualF
                 vfs->file[file_index].content = realloc(vfs->file[file_index].content,
                                                         strlen(content) +
                                                         strlen(vfs->file[file_index].content) + 1);
-                strcat(vfs->file[file_index].content, content);
-            }
 
-            else {
+                strcat(vfs->file[file_index].content, content);
+            } else {
                 vfs->file[file_index].content = malloc(strlen(content) + 1);
                 strcpy(vfs->file[file_index].content, content);
             }
             break;
 
         default:
+            return -1;
             break;
         }
-        char *datetime_str = _vfs_get_datetime();
-        if (datetime_str != NULL) {
+
+        char *datetime_str = vfs_get_datetime();
+
+        if (datetime_str != NULL)
+        {
             strcpy(vfs->file[file_index].metadata.open_date, datetime_str);
             strcpy(vfs->file[file_index].metadata.change_date, datetime_str);
         }
@@ -193,72 +208,102 @@ int vfs_write_file(const char *filename, const char *content, int mode, VirtualF
 
 }
 
-int get_file_info(const char *filename, VirtualFileSystem *vfs)
+char *vfs_get_file_metadata(const char *filename, VirtualFileSystem *vfs)
 {
+
     int file_index = vfs_get_file_index(filename, vfs);
 
-    if (file_index >= 0 && file_index <= vfs->count)
+    if (file_index >= 0 && file_index < vfs->count)
     {
         unsigned int i = file_index;
 
+        const char *create_date = vfs->file[i].metadata.create_date
+                                ? vfs->file[i].metadata.create_date : "N/A";
+
+        const char *change_date = vfs->file[i].metadata.change_date
+                                ? vfs->file[i].metadata.change_date : "N/A";
+
+        const char *open_date = vfs->file[i].metadata.open_date
+                                ? vfs->file[i].metadata.open_date : "N/A";
 
         size_t info_size = strlen(vfs->file[i].name) +
-                        strlen(vfs->file[i].metadata.create_date) +
-                        strlen(vfs->file[i].metadata.change_date) +
-                        strlen(vfs->file[i].metadata.open_date) + 4;
+                            strlen(create_date) +
+                            strlen(change_date) +
+                            strlen(open_date) + 50;
 
         char *info = malloc(info_size);
+
         if (info == NULL) {
-            printf("%s", "Failed to allocate memory");
-            return -1;
-        }
-
-        sprintf(info, "%s \t\t %s \t %s \t %s \t %ld\n",
-                vfs->file[i].name,
-                vfs->file[i].metadata.create_date,
-                vfs->file[i].metadata.change_date,
-                vfs->file[i].metadata.open_date,
-                vfs->file[i].metadata.size);
-
-        printf("%s \t %s \t\t %s \t\t %s \t\t %s\n", "filename", "create_date", "change_date", "open_date", "size");
-        printf("%s\n", info);
-
-        free(info);
-        return 0;
-    }
-
-    printf("%s %s", "File not found:", filename);
-    return -1;
-}
-
-char *get_file_index_info(int file_index, VirtualFileSystem *vfs)
-{
-    if (file_index < vfs->count)
-    {
-        unsigned int i = file_index;
-
-        size_t info_size = strlen(vfs->file[i].name) +
-                        strlen(vfs->file[i].metadata.create_date) +
-                        strlen(vfs->file[i].metadata.change_date) +
-                        strlen(vfs->file[i].metadata.open_date) + 4;
-
-        char *info = malloc(info_size);
-        if (info == NULL) {
-            printf("%s", "Failed to allocate memory");
+            printf("Failed to allocate memory\n");
             return NULL;
         }
 
-        sprintf(info, "%s | %s | %s | %s | %ld\n",
-                vfs->file[i].name,
-                vfs->file[i].metadata.create_date,
-                vfs->file[i].metadata.change_date,
-                vfs->file[i].metadata.open_date,
-                vfs->file[i].metadata.size);
-
+        sprintf(info, "%s     | %s | %s | %s | %ld",
+                                    vfs->file[i].name,
+                                    create_date,
+                                    change_date,
+                                    open_date,
+                                    vfs->file[i].metadata.size);
 
         return info;
     }
 
-    printf("%s", "Index out of array");
+    // printf("%s", "File not found");
     return NULL;
+
+}
+
+char *vfs_get_file_index_metadata(int file_index, VirtualFileSystem *vfs)
+{
+
+    if (file_index >= 0 && file_index < vfs->count) {
+        unsigned int i = file_index;
+
+        const char *create_date = vfs->file[i].metadata.create_date
+                                ? vfs->file[i].metadata.create_date : "N/A";
+
+        const char *change_date = vfs->file[i].metadata.change_date
+                                ? vfs->file[i].metadata.change_date : "N/A";
+
+        const char *open_date = vfs->file[i].metadata.open_date
+                                ? vfs->file[i].metadata.open_date : "N/A";
+
+        size_t info_size = strlen(vfs->file[i].name) +
+                            strlen(create_date) +
+                            strlen(change_date) +
+                            strlen(open_date) + 50;
+
+        char *info = malloc(info_size);
+        if (info == NULL) {
+            // printf("Failed to allocate memory\n");
+            return NULL;
+        }
+
+        sprintf(info, "%s     | %s | %s | %s | %ld",
+                                    vfs->file[i].name,
+                                    create_date,
+                                    change_date,
+                                    open_date,
+                                    vfs->file[i].metadata.size);
+
+        return info;
+    }
+
+    // printf("Index out of array\n");
+    return NULL;
+
+}
+
+void vfs_free_memory(VirtualFileSystem *vfs)
+{
+    for (int i = 0; i < vfs->count; i++)
+    {
+        free(vfs->file[i].name);
+        free(vfs->file[i].content);
+        free(vfs->file[i].metadata.change_date);
+        free(vfs->file[i].metadata.create_date);
+        free(vfs->file[i].metadata.open_date);
+    }
+    vfs->count = 0;
+
 }

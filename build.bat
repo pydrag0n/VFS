@@ -1,2 +1,2 @@
-gcc src/main.c src/file_func.c -o VFS
-.\VFS.exe
+gcc src/test.c src/file_func.c -o test
+.\test.exe
