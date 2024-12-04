@@ -5,14 +5,15 @@
 #include <time.h>
 
 #include "include/vfs.h"
+#include "include/permissions.h"
 
+int vfs_main_user = -1;
 
 char *vfs_get_datetime()
 {
         int date_size = 256;
         char *datetime = malloc(date_size);
-        if (datetime == NULL)
-        {
+        if (datetime == NULL) {
             return NULL;
         }
 
@@ -27,8 +28,7 @@ char *vfs_get_datetime()
 
 char *vfs_get_file_name(int file_index, VirtualFileSystem *vfs)
 {
-    if (file_index < vfs->count)
-    {
+    if (file_index < vfs->count) {
         return vfs->file[file_index].name;
     }
     return NULL;
@@ -36,8 +36,7 @@ char *vfs_get_file_name(int file_index, VirtualFileSystem *vfs)
 
 long vfs_get_file_size(int file_index, VirtualFileSystem *vfs)
 {
-    if (file_index < vfs->count)
-    {
+    if (file_index < vfs->count) {
         return vfs->file[file_index].metadata.size;
     }
     return -1;
@@ -46,8 +45,7 @@ long vfs_get_file_size(int file_index, VirtualFileSystem *vfs)
 char *vfs_get_file_content(int file_index, VirtualFileSystem *vfs)
 {
     char *content = vfs->file[file_index].content;
-    if (file_index < vfs->count && content != NULL)
-    {
+    if (file_index < vfs->count && content != NULL) {
         return content;
     }
     return NULL;
@@ -56,10 +54,8 @@ char *vfs_get_file_content(int file_index, VirtualFileSystem *vfs)
 
 int vfs_get_file_index(const char *filename, VirtualFileSystem *vfs)
 {
-    for (int i = 0; i < vfs->count;)
-    {
-        if (strcmp(vfs->file[i].name, filename) == 0)
-        {
+    for (unsigned int i = 0; i < vfs->count;) {
+        if (strcmp(vfs->file[i].name, filename) == 0) {
             return i;
         }
         i++;
@@ -72,21 +68,22 @@ int vfs_get_file_index(const char *filename, VirtualFileSystem *vfs)
 int vfs_create_file(const char *filename, VirtualFileSystem *vfs)
 {
 
-    if (vfs_get_file_index(filename, vfs) > 0)
-    {
+    if (vfs_get_file_index(filename, vfs) > 0) {
         return -1; // File already exists
     }
 
-    if (vfs->count >= MAX_FILES)
-    {
+    if (vfs->count >= MAX_FILES) {
         return -1; // Maximum file limit reached
     }
 
     vfs->file[vfs->count].name = malloc(strlen(filename) + 1);
 
-    if (vfs->file[vfs->count].name == NULL)
-    {
+    if (vfs->file[vfs->count].name == NULL) {
         return -1;
+    }
+
+    if (vfs->user[vfs_main_user].permission < READ_WRITE) {
+        return -2; // Permission denied
     }
 
     strcpy(vfs->file[vfs->count].name, filename);
@@ -98,8 +95,7 @@ int vfs_create_file(const char *filename, VirtualFileSystem *vfs)
 
     char *datetime_str = vfs_get_datetime();
 
-    if (datetime_str != NULL)
-    {
+    if (datetime_str != NULL) {
         strcpy(vfs->file[vfs->count].metadata.create_date, datetime_str);
         strcpy(vfs->file[vfs->count].metadata.change_date, datetime_str);
         strcpy(vfs->file[vfs->count].metadata.open_date, datetime_str);
@@ -117,19 +113,21 @@ int vfs_create_file(const char *filename, VirtualFileSystem *vfs)
 
 char *vfs_read_file(const char *filename, VirtualFileSystem *vfs)
 {
+
+    if (vfs->user[vfs_main_user].permission < ONLY_READ) {
+        return NULL; // Permission denied
+    }
+
     int file_index = vfs_get_file_index(filename, vfs);
-    if (file_index >= 0 && strcmp(vfs->file[file_index].name, filename) == 0)
-    {
-        if (vfs->file[file_index].content == NULL)
-        {
+    if (file_index >= 0 && strcmp(vfs->file[file_index].name, filename) == 0) {
+        if (vfs->file[file_index].content == NULL) {
             printf("%s", "File is empty\n"); // debug
             return NULL;
         }
 
         char *datetime_str = vfs_get_datetime();
 
-        if (datetime_str != NULL)
-        {
+        if (datetime_str != NULL) {
             strcpy(vfs->file[file_index].metadata.open_date, datetime_str);
         }
 
@@ -143,7 +141,8 @@ char *vfs_read_file(const char *filename, VirtualFileSystem *vfs)
 
 int vfs_write_file(const char *filename,
                     const char *content,
-                    char mode, VirtualFileSystem *vfs)
+                    char mode,
+                    VirtualFileSystem *vfs)
 {
 
     /*
@@ -152,15 +151,15 @@ int vfs_write_file(const char *filename,
      */
 
     int file_index = vfs_get_file_index(filename, vfs);
+    if (file_index >= 0) {
+        if (vfs->user[vfs_main_user].permission < READ_WRITE) {
+            return -2; // Permission denied
+        }
 
-    if (file_index >= 0)
-    {
-        switch (mode)
-        {
+        switch (mode) {
         case 'w':
 
-            if (vfs->file[file_index].content != NULL)
-            {
+            if (vfs->file[file_index].content != NULL) {
                 free(vfs->file[file_index].content);
             }
 
@@ -173,8 +172,7 @@ int vfs_write_file(const char *filename,
 
         case 'a':
 
-            if (vfs->file[file_index].content != NULL)
-            {
+            if (vfs->file[file_index].content != NULL) {
                 vfs->file[file_index].content = realloc(vfs->file[file_index].content,
                                                         strlen(content) +
                                                         strlen(vfs->file[file_index].content) + 1);
@@ -193,8 +191,7 @@ int vfs_write_file(const char *filename,
 
         char *datetime_str = vfs_get_datetime();
 
-        if (datetime_str != NULL)
-        {
+        if (datetime_str != NULL) {
             strcpy(vfs->file[file_index].metadata.open_date, datetime_str);
             strcpy(vfs->file[file_index].metadata.change_date, datetime_str);
         }
@@ -213,8 +210,7 @@ char *vfs_get_file_metadata(const char *filename, VirtualFileSystem *vfs)
 
     int file_index = vfs_get_file_index(filename, vfs);
 
-    if (file_index >= 0 && file_index < vfs->count)
-    {
+    if (file_index >= 0 && file_index < vfs->count) {
         unsigned int i = file_index;
 
         const char *create_date = vfs->file[i].metadata.create_date
@@ -296,8 +292,7 @@ char *vfs_get_file_index_metadata(int file_index, VirtualFileSystem *vfs)
 
 void vfs_free_memory(VirtualFileSystem *vfs)
 {
-    for (int i = 0; i < vfs->count; i++)
-    {
+    for (unsigned int i = 0; i < vfs->count; i++) {
         free(vfs->file[i].name);
         free(vfs->file[i].content);
         free(vfs->file[i].metadata.change_date);
@@ -307,3 +302,9 @@ void vfs_free_memory(VirtualFileSystem *vfs)
     vfs->count = 0;
 
 }
+
+void vfs_set_main_user(int user_index)
+{
+    vfs_main_user = user_index;
+}
+

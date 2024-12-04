@@ -1,2 +1,2 @@
-gcc src/test.c src/file_func.c -o test
+gcc src/test.c src/file.c src/user.c -o test
 .\test.exe
