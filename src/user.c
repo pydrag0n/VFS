@@ -4,8 +4,6 @@
 #include <time.h>
 
 #include "include/vfs.h"
-#include "include/permissions.h"
-
 
 
 int vfs_user_get_index(const char *username, VirtualFileSystem *vfs)
@@ -16,10 +14,30 @@ int vfs_user_get_index(const char *username, VirtualFileSystem *vfs)
         }
         i++;
     }
-    return -2; // Error: User not found
+    return -1; // Error: User not found
 }
 
-int vfs_create_user(const char *username, const char *password, int permission, VirtualFileSystem *vfs)
+int vfs_user_get_permission(const char *username, VirtualFileSystem *vfs)
+{
+    int user_index = vfs_user_get_index(username, vfs);
+    if (strcmp(vfs->user[user_index].name, username) == 0) {
+        return vfs->user[user_index].permission;
+    }
+    return -1; // User not found
+}
+
+void vfs_user_get_list(VirtualFileSystem *vfs)
+{
+    for (unsigned int i=0; i<vfs->user_count;) {
+        printf("%s %s %i\n", vfs->user[i].name, vfs->user[i].passwd, vfs->user[i].permission);
+        i++;
+    }
+}
+
+int vfs_user_create(const char *username,
+                        const char *password,
+                        int permission,
+                        VirtualFileSystem *vfs)
 {
     if (vfs->user_count >= MAX_USERS) {
         return -1; // Maximum users reached
@@ -39,7 +57,7 @@ int vfs_create_user(const char *username, const char *password, int permission, 
     return 0;
 }
 
-int vfs_authenticate_user(const char *username, const char *password, VirtualFileSystem *vfs)
+int vfs_user_authenticate(const char *username, const char *password, VirtualFileSystem *vfs)
 {
     for (unsigned int i = 0; i < vfs->user_count; i++) {
         if (strcmp(vfs->user[i].name, username) == 0 && strcmp(vfs->user[i].passwd, password) == 0) {
@@ -47,21 +65,4 @@ int vfs_authenticate_user(const char *username, const char *password, VirtualFil
         }
     }
     return -1; // Authentication failed
-}
-
-int vfs_get_user_permission(const char *username, VirtualFileSystem *vfs)
-{
-    int user_index = vfs_user_get_index(username, vfs);
-    if (strcmp(vfs->user[user_index].name, username) == 0) {
-        return vfs->user[user_index].permission;
-    }
-    return -1; // User not found
-}
-
-void vfs_user_get_list(VirtualFileSystem *vfs)
-{
-    for (unsigned int i=0; i<vfs->user_count;) {
-        printf("%s %s %i\n", vfs->user[i].name, vfs->user[i].passwd, vfs->user[i].permission);
-        i++;
-    }
 }

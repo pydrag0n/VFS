@@ -5,7 +5,7 @@
 #include <time.h>
 
 #include "include/vfs.h"
-#include "include/permissions.h"
+
 
 int vfs_main_user = -1;
 
@@ -26,7 +26,7 @@ char *vfs_get_datetime()
         return datetime;
 }
 
-char *vfs_get_file_name(int file_index, VirtualFileSystem *vfs)
+char *vfs_file_get_name(int file_index, VirtualFileSystem *vfs)
 {
     if (file_index < vfs->count) {
         return vfs->file[file_index].name;
@@ -34,7 +34,7 @@ char *vfs_get_file_name(int file_index, VirtualFileSystem *vfs)
     return NULL;
 }
 
-long vfs_get_file_size(int file_index, VirtualFileSystem *vfs)
+long vfs_file_get_size(int file_index, VirtualFileSystem *vfs)
 {
     if (file_index < vfs->count) {
         return vfs->file[file_index].metadata.size;
@@ -42,7 +42,7 @@ long vfs_get_file_size(int file_index, VirtualFileSystem *vfs)
     return -1;
 }
 
-char *vfs_get_file_content(int file_index, VirtualFileSystem *vfs)
+char *vfs_file_get_content(int file_index, VirtualFileSystem *vfs)
 {
     char *content = vfs->file[file_index].content;
     if (file_index < vfs->count && content != NULL) {
@@ -52,7 +52,7 @@ char *vfs_get_file_content(int file_index, VirtualFileSystem *vfs)
 }
 
 
-int vfs_get_file_index(const char *filename, VirtualFileSystem *vfs)
+int vfs_file_get_index(const char *filename, VirtualFileSystem *vfs)
 {
     for (unsigned int i = 0; i < vfs->count;) {
         if (strcmp(vfs->file[i].name, filename) == 0) {
@@ -65,10 +65,10 @@ int vfs_get_file_index(const char *filename, VirtualFileSystem *vfs)
     return -1;
 }
 
-int vfs_create_file(const char *filename, VirtualFileSystem *vfs)
+int vfs_file_create(const char *filename, VirtualFileSystem *vfs)
 {
 
-    if (vfs_get_file_index(filename, vfs) > 0) {
+    if (vfs_file_get_index(filename, vfs) > 0) {
         return -1; // File already exists
     }
 
@@ -111,14 +111,14 @@ int vfs_create_file(const char *filename, VirtualFileSystem *vfs)
 }
 
 
-char *vfs_read_file(const char *filename, VirtualFileSystem *vfs)
+char *vfs_file_read(const char *filename, VirtualFileSystem *vfs)
 {
 
     if (vfs->user[vfs_main_user].permission < ONLY_READ) {
         return NULL; // Permission denied
     }
 
-    int file_index = vfs_get_file_index(filename, vfs);
+    int file_index = vfs_file_get_index(filename, vfs);
     if (file_index >= 0 && strcmp(vfs->file[file_index].name, filename) == 0) {
         if (vfs->file[file_index].content == NULL) {
             printf("%s", "File is empty\n"); // debug
@@ -139,7 +139,7 @@ char *vfs_read_file(const char *filename, VirtualFileSystem *vfs)
 }
 
 
-int vfs_write_file(const char *filename,
+int vfs_file_write(const char *filename,
                     const char *content,
                     char mode,
                     VirtualFileSystem *vfs)
@@ -150,7 +150,7 @@ int vfs_write_file(const char *filename,
      *   mode: 2  = append
      */
 
-    int file_index = vfs_get_file_index(filename, vfs);
+    int file_index = vfs_file_get_index(filename, vfs);
     if (file_index >= 0) {
         if (vfs->user[vfs_main_user].permission < READ_WRITE) {
             return -2; // Permission denied
@@ -205,10 +205,10 @@ int vfs_write_file(const char *filename,
 
 }
 
-char *vfs_get_file_metadata(const char *filename, VirtualFileSystem *vfs)
+char *vfs_file_get_metadata(const char *filename, VirtualFileSystem *vfs)
 {
 
-    int file_index = vfs_get_file_index(filename, vfs);
+    int file_index = vfs_file_get_index(filename, vfs);
 
     if (file_index >= 0 && file_index < vfs->count) {
         unsigned int i = file_index;
@@ -249,7 +249,7 @@ char *vfs_get_file_metadata(const char *filename, VirtualFileSystem *vfs)
 
 }
 
-char *vfs_get_file_index_metadata(int file_index, VirtualFileSystem *vfs)
+char *vfs_file_get_metadata_index(int file_index, VirtualFileSystem *vfs)
 {
 
     if (file_index >= 0 && file_index < vfs->count) {

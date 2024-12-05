@@ -1,3 +1,5 @@
+#include "permissions.h"
+
 //macros
 #define MAX_FILES           1024
 #define MAX_USERS           64
@@ -41,26 +43,27 @@ extern int vfs_main_user;
 // ## functions
 // file
 
-int vfs_create_file(const char *filename, VirtualFileSystem *vfs);
-int vfs_write_file(const char *filename, const char *content, char mode, VirtualFileSystem *vfs);
-char *vfs_read_file(const char *filename, VirtualFileSystem *vfs);
+int vfs_file_create(const char *filename, VirtualFileSystem *vfs);
+int vfs_file_write(const char *filename, const char *content, char mode, VirtualFileSystem *vfs);
+char *vfs_file_read(const char *filename, VirtualFileSystem *vfs);
 
-int vfs_get_file_index(const char *filename, VirtualFileSystem *vfs);
-long vfs_get_file_size(int file_index, VirtualFileSystem *vfs);
+int vfs_file_get_index(const char *filename, VirtualFileSystem *vfs);
+long vfs_file_get_size(int file_index, VirtualFileSystem *vfs);
 
-char *vfs_get_file_metadata(const char *filename, VirtualFileSystem *vfs);
-char *vfs_get_file_index_metadata(int file_index, VirtualFileSystem *vfs);
-char *vfs_get_file_name(int file_index, VirtualFileSystem *vfs);
-char *vfs_get_file_content(int file_index, VirtualFileSystem *vfs);
+char *vfs_file_get_metadata(const char *filename, VirtualFileSystem *vfs);
+char *vfs_file_get_metadata_index(int file_index, VirtualFileSystem *vfs);
+char *vfs_file_get_name(int file_index, VirtualFileSystem *vfs);
+char *vfs_file_get_content(int file_index, VirtualFileSystem *vfs);
 
 void vfs_free_memory(VirtualFileSystem *vfs);
 
 
 // user
 
-void vfs_set_main_user(int user_index);
-int vfs_authenticate_user(const char *username, const char *password, VirtualFileSystem *vfs);
-int vfs_get_user_permission(const char *username, VirtualFileSystem *vfs);
-int vfs_create_user(const char *username, const char *password, int permission, VirtualFileSystem *vfs);
+int vfs_user_authenticate(const char *username, const char *password, VirtualFileSystem *vfs);
+int vfs_user_get_permission(const char *username, VirtualFileSystem *vfs);
+int vfs_user_create(const char *username, const char *password, int permission, VirtualFileSystem *vfs);
 int vfs_user_get_index(const char *username, VirtualFileSystem *vfs);
+
 void vfs_user_get_list(VirtualFileSystem *vfs);
+void vfs_set_main_user(int user_index);
