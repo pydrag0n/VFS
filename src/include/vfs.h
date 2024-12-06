@@ -46,7 +46,7 @@ extern int vfs_main_user;
 int vfs_file_create(const char *filename, VirtualFileSystem *vfs);
 int vfs_file_write(const char *filename, const char *content, char mode, VirtualFileSystem *vfs);
 char *vfs_file_read(const char *filename, VirtualFileSystem *vfs);
-
+int vfs_file_delete(const char *filename, VirtualFileSystem *vfs);
 int vfs_file_get_index(const char *filename, VirtualFileSystem *vfs);
 long vfs_file_get_size(int file_index, VirtualFileSystem *vfs);
 

@@ -205,6 +205,34 @@ int vfs_file_write(const char *filename,
 
 }
 
+
+int vfs_file_delete(const char *filename, VirtualFileSystem *vfs)
+{
+    if (vfs->user[vfs_main_user].permission < READ_WRITE_DEL) {
+        return -1;
+    }
+
+    int file_index = vfs_file_get_index(filename, vfs);
+    if (file_index < 0) {
+        return -1;
+    }
+
+    free(vfs->file[file_index].name);
+    free(vfs->file[file_index].content);
+    free(vfs->file[file_index].metadata.create_date);
+    free(vfs->file[file_index].metadata.change_date);
+    free(vfs->file[file_index].metadata.open_date);
+
+    for (unsigned int i = file_index; i < vfs->count - 1; i++) {
+        vfs->file[i] = vfs->file[i + 1];
+    }
+
+    vfs->count--;
+
+    return 0;
+}
+
+
 char *vfs_file_get_metadata(const char *filename, VirtualFileSystem *vfs)
 {
 

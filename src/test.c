@@ -18,6 +18,7 @@ int main() {
     // Test vfs_user_create
     vfs_user_create("user1", "1234qwerty", READ_WRITE, &vfs);
     vfs_user_create("user2", "1234qwerty", READ_WRITE, &vfs);
+    vfs_user_create("user3", "1234qwerty", READ_WRITE_DEL, &vfs);
 
     // Test vfs_set_main_user
     vfs_set_main_user(vfs_user_get_index("user1", &vfs));
@@ -27,6 +28,7 @@ int main() {
 
     // Test vfs_user_authenticate
     assert(vfs_user_authenticate("user2", "1234qwerty", &vfs) >= 0);
+    assert(vfs_user_authenticate("user3", "1234qwerty", &vfs) >= 0);
 
     // Test vfs_file_create
     const char* filename1 = "testfile1.txt";
@@ -153,6 +155,22 @@ int main() {
         printf("Failed to append content correctly\n");
         printf("%i - %i", strlen(content_read1), strlen(content1) + strlen(append_content) + 1);
         return -1;
+    }
+    vfs_set_main_user(vfs_user_get_index("user3", &vfs));
+
+    int isdel = vfs_file_delete(filename2, &vfs);
+    if (isdel < 0) {
+        printf("permission danied");
+    }
+
+    else {
+        printf("file deleted %s\n", filename2);
+        char* metadata1 = vfs_file_get_metadata(filename1, &vfs);
+        char* metadata2 = vfs_file_get_metadata(filename2, &vfs);
+
+        if (metadata1 == NULL || metadata2 == NULL) {
+            printf("Failed to get file metadata\n");
+        }
     }
 
     // Test vfs_free_memory
