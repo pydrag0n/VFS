@@ -31,27 +31,34 @@ typedef struct VFSAPI_FILE {
     char *content;
 } vfsFile;
 
+typedef struct VFSAPI_COUNTER {
+    unsigned int file;
+    unsigned int user;
+} counter;
+
 typedef struct VFSAPI {
     user user[MAX_USERS];
     vfsFile file[MAX_FILES];
-    unsigned int count;
-    unsigned int user_count;
+    counter count;
 } VirtualFileSystem;
 
 extern int vfs_main_user;
 
 // ## functions
+
+int vfs_init(VirtualFileSystem *vfs);
+
 // file
 
 int vfs_file_create(const char *filename, VirtualFileSystem *vfs);
 int vfs_file_write(const char *filename, const char *content, char mode, VirtualFileSystem *vfs);
 char *vfs_file_read(const char *filename, VirtualFileSystem *vfs);
 int vfs_file_delete(const char *filename, VirtualFileSystem *vfs);
+
 int vfs_file_get_index(const char *filename, VirtualFileSystem *vfs);
 long vfs_file_get_size(int file_index, VirtualFileSystem *vfs);
 
 char *vfs_file_get_metadata(const char *filename, VirtualFileSystem *vfs);
-char *vfs_file_get_metadata_index(int file_index, VirtualFileSystem *vfs);
 char *vfs_file_get_name(int file_index, VirtualFileSystem *vfs);
 char *vfs_file_get_content(int file_index, VirtualFileSystem *vfs);
 
@@ -65,5 +72,7 @@ int vfs_user_get_permission(const char *username, VirtualFileSystem *vfs);
 int vfs_user_create(const char *username, const char *password, int permission, VirtualFileSystem *vfs);
 int vfs_user_get_index(const char *username, VirtualFileSystem *vfs);
 
-void vfs_user_get_list(VirtualFileSystem *vfs);
 void vfs_set_main_user(int user_index);
+int vfs_save(VirtualFileSystem *vfs, const char *filename);
+int vfs_load(VirtualFileSystem *vfs, const char *filename);
+void vfs_display_all_data(VirtualFileSystem *vfs);

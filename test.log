@@ -1,0 +1,10 @@
+2024-12-10 23:53:43 [INFO] src/user.c:56 user created root
+2024-12-10 23:53:43 [INFO] src/user.c:56 user created user1
+2024-12-10 23:53:43 [INFO] src/user.c:56 user created user2
+2024-12-10 23:53:43 [INFO] src/user.c:56 user created user3
+2024-12-10 23:53:43 [INFO] src/user.c:66 Authentication passed user2
+2024-12-10 23:53:43 [INFO] src/user.c:66 Authentication passed user3
+2024-12-10 23:53:43 [INFO] src/file.c:117 File created: testfile1.txt
+2024-12-10 23:53:43 [INFO] src/file.c:117 File created: testfile2.txt
+2024-12-10 23:53:43 [INFO] src/file.c:145 File read: testfile1.txt
+2024-12-10 23:53:43 [INFO] src/file.c:145 File read: testfile2.txt

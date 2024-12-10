@@ -10,10 +10,8 @@ int main() {
     clock_t start_time, end_time;
 
     start_time = clock();
-
     VirtualFileSystem vfs;
-    vfs.count = 0;
-    vfs.user_count = 0;
+    vfs_init(&vfs);
 
     // Test vfs_user_create
     vfs_user_create("user1", "1234qwerty", READ_WRITE, &vfs);
@@ -24,7 +22,6 @@ int main() {
     vfs_set_main_user(vfs_user_get_index("user1", &vfs));
 
     // Test vfs_user_get_list
-    vfs_user_get_list(&vfs);
 
     // Test vfs_user_authenticate
     assert(vfs_user_authenticate("user2", "1234qwerty", &vfs) >= 0);
@@ -111,19 +108,6 @@ int main() {
     free(metadata1);
     free(metadata2);
 
-    // Test vfs_file_get_metadata_index
-    metadata1 = vfs_file_get_metadata_index(file_index1, &vfs);
-    metadata2 = vfs_file_get_metadata_index(file_index2, &vfs);
-
-    if (metadata1 == NULL || metadata2 == NULL) {
-        printf("Failed to get file index metadata\n");
-        return -1;
-    }
-
-    printf("%s\n", metadata1);
-    printf("%s\n", metadata2);
-    free(metadata1);
-    free(metadata2);
 
     // Test vfs_file_read
     content_read1 = vfs_file_read(filename1, &vfs);
@@ -172,6 +156,7 @@ int main() {
             printf("Failed to get file metadata\n");
         }
     }
+    vfs_save(&vfs, "vfs_img.bin");
 
     // Test vfs_free_memory
     vfs_free_memory(&vfs);
