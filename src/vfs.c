@@ -5,6 +5,9 @@
 #include "include/logger/logger.h"
 #include "include/vfs.h"
 
+int vfs_main_user = 0;
+
+
 int vfs_init(VirtualFileSystem *vfs)
 {
     Config newConfig = { "test.log", DEFAULT_FORMAT, ALL};
@@ -164,4 +167,9 @@ void vfs_display_all_data(VirtualFileSystem *vfs)
 
     // Display main user index
     printf("Main User Index: %d\n", vfs_main_user);
+}
+
+void vfs_set_main_user(int user_index)
+{
+    vfs_main_user = user_index;
 }

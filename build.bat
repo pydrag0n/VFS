@@ -1,2 +1,2 @@
-gcc src/test.c src/file.c src/user.c src/include/logger/logger.c src/vfs.c -o test
-.\test.exe
+gcc cli.c src/file.c src/vfs.c src/user.c src/include/logger/logger.c -o vfs_cli
+.\vfs_cli.exe

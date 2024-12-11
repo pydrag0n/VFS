@@ -21,12 +21,15 @@ int vfs_user_get_index(const char *username, VirtualFileSystem *vfs)
 int vfs_user_get_permission(const char *username, VirtualFileSystem *vfs)
 {
     int user_index = vfs_user_get_index(username, vfs);
-    if (strcmp(vfs->user[user_index].name, username) == 0) {
-        return vfs->user[user_index].permission;
+    if (user_index < 0) {
+        log_error("User not found");
+        return -1; // User not found
     }
+        if (strcmp(vfs->user[user_index].name, username) == 0) {
+            return vfs->user[user_index].permission;
+        }
 
-    log_error("User not found");
-    return -1; // User not found
+    return -1;
 }
 
 int vfs_user_create(const char *username,

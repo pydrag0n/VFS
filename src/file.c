@@ -7,7 +7,6 @@
 #include "include/vfs.h"
 #include "include/logger/logger.h"
 
-int vfs_main_user = 0;
 
 char *vfs_get_datetime()
 {
@@ -35,11 +34,22 @@ char *vfs_file_get_name(int file_index, VirtualFileSystem *vfs)
     return NULL;
 }
 
+int vfs_file_get_permission(int file_index, VirtualFileSystem *vfs)
+{
+    if (file_index < vfs->count.file) {
+        return vfs->file[file_index].metadata.permission;
+    }
+
+    log_error("File not found");
+    return -1;
+}
+
 long vfs_file_get_size(int file_index, VirtualFileSystem *vfs)
 {
     if (file_index < vfs->count.file) {
         return vfs->file[file_index].metadata.size;
     }
+
     log_error("File not found");
     return -1;
 }
@@ -305,8 +315,12 @@ void vfs_free_memory(VirtualFileSystem *vfs)
 
 }
 
-void vfs_set_main_user(int user_index)
+int vfs_file_set_permission(const char *filename, int permission, VirtualFileSystem *vfs)
 {
-    vfs_main_user = user_index;
+    int file_index = vfs_user_get_index(filename, vfs);
+    if (file_index > 0) {
+        vfs->file[file_index].metadata.permission = permission;
+        return 0;
+    }
+    return -1;
 }
-
