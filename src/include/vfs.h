@@ -46,7 +46,7 @@ extern int vfs_main_user;
 
 // ## functions
 
-int vfs_init(VirtualFileSystem *vfs);
+int vfs_init(char *log_filename, VirtualFileSystem *vfs);
 
 // file
 

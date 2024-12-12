@@ -5,7 +5,7 @@
 
 int main() {
     VirtualFileSystem vfs;
-    vfs_init(&vfs);
+    vfs_init("vfs_logs.log", &vfs);
 
     while (1) {
         printf("VFS> ");

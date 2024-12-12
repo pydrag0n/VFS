@@ -1,0 +1,5 @@
+2024-12-11 23:52:41 [INFO] src/user.c:59 user created root
+2024-12-11 23:53:27 [INFO] src/user.c:59 user created root
+2024-12-11 23:53:40 [INFO] src/user.c:59 user created root
+2024-12-11 23:54:04 [INFO] src/file.c:127 File created: t
+2024-12-11 23:54:45 [INFO] src/file.c:155 File read: t
