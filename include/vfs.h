@@ -54,11 +54,11 @@ int vfs_file_delete(const char *filename, VirtualFileSystem *vfs);
 int vfs_file_set_permission(const char *filename, int permission, VirtualFileSystem *vfs);
 
 int vfs_file_get_index(const char *filename, VirtualFileSystem *vfs);
-long vfs_file_get_size(int file_index, VirtualFileSystem *vfs);
+long vfs_file_get_size(unsigned int file_index, VirtualFileSystem *vfs);
 
 char *vfs_file_get_metadata(const char *filename, VirtualFileSystem *vfs);
-char *vfs_file_get_name(int file_index, VirtualFileSystem *vfs);
-char *vfs_file_get_content(int file_index, VirtualFileSystem *vfs);
+char *vfs_file_get_name(unsigned int file_index, VirtualFileSystem *vfs);
+char *vfs_file_get_content(unsigned int file_index, VirtualFileSystem *vfs);
 
 void vfs_free_memory(VirtualFileSystem *vfs);
 

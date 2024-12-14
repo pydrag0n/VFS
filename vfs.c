@@ -164,7 +164,7 @@ void vfs_display_all_data(VirtualFileSystem *vfs)
 {
     // Display user data
     printf("Users:\n");
-    for (int i = 0; i < vfs->count.user; i++) {
+    for (unsigned int i = 0; i < vfs->count.user; i++) {
         printf("User %d:\n", i);
         printf("\tName: %s\n", vfs->user[i].name);
         printf("\tPassword: %s\n", vfs->user[i].passwd);
@@ -174,7 +174,7 @@ void vfs_display_all_data(VirtualFileSystem *vfs)
 
     // Display file data
     printf("Files:\n");
-    for (int i = 0; i < vfs->count.file; i++) {
+    for (unsigned int i = 0; i < vfs->count.file; i++) {
         printf("File %d:\n", i);
         printf("\tName: %s\n", vfs->file[i].name);
         printf("\tCreate Date: %s\n", vfs->file[i].metadata.create_date);

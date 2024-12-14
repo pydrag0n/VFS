@@ -10,6 +10,6 @@
 int main()
 {
     VirtualFileSystem vfs1;
-    vfs_load(&vfs1, "vfs_img.bin");
+    vfs_load(&vfs1, "out/vfs_img.bin");
     vfs_display_all_data(&vfs1);
 }

@@ -11,7 +11,7 @@ int main() {
 
     start_time = clock();
     VirtualFileSystem vfs;
-    vfs_init("logs.log", &vfs);
+    vfs_init("out/logs.log", &vfs);
 
     // Test vfs_user_create
     vfs_user_create("user1", "1234qwerty", READ_WRITE, &vfs);
@@ -137,7 +137,7 @@ int main() {
 
     if (strlen(content_read1)+1 != strlen(content1) + strlen(append_content) + 1) {
         printf("Failed to append content correctly\n");
-        printf("%i - %i", strlen(content_read1), strlen(content1) + strlen(append_content) + 1);
+        printf("%lli - %lli", strlen(content_read1), strlen(content1) + strlen(append_content) + 1);
         return -1;
     }
     vfs_set_main_user(vfs_user_get_index("user3", &vfs));
@@ -156,7 +156,7 @@ int main() {
             printf("Failed to get file metadata\n");
         }
     }
-    vfs_save(&vfs, "vfs_img.bin");
+    vfs_save(&vfs, "out/vfs_img.bin");
 
     // Test vfs_free_memory
     vfs_free_memory(&vfs);

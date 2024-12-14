@@ -25,7 +25,7 @@ char *vfs_get_datetime()
         return datetime;
 }
 
-char *vfs_file_get_name(int file_index, VirtualFileSystem *vfs)
+char *vfs_file_get_name(unsigned int file_index, VirtualFileSystem *vfs)
 {
     if (file_index < vfs->count.file) {
         return vfs->file[file_index].name;
@@ -34,7 +34,7 @@ char *vfs_file_get_name(int file_index, VirtualFileSystem *vfs)
     return NULL;
 }
 
-int vfs_file_get_permission(int file_index, VirtualFileSystem *vfs)
+int vfs_file_get_permission(unsigned int file_index, VirtualFileSystem *vfs)
 {
     if (file_index < vfs->count.file) {
         return vfs->file[file_index].metadata.permission;
@@ -44,7 +44,7 @@ int vfs_file_get_permission(int file_index, VirtualFileSystem *vfs)
     return -1;
 }
 
-long vfs_file_get_size(int file_index, VirtualFileSystem *vfs)
+long vfs_file_get_size(unsigned int file_index, VirtualFileSystem *vfs)
 {
     if (file_index < vfs->count.file) {
         return vfs->file[file_index].metadata.size;
@@ -54,7 +54,7 @@ long vfs_file_get_size(int file_index, VirtualFileSystem *vfs)
     return -1;
 }
 
-char *vfs_file_get_content(int file_index, VirtualFileSystem *vfs)
+char *vfs_file_get_content(unsigned int file_index, VirtualFileSystem *vfs)
 {
     char *content = vfs->file[file_index].content;
     if (file_index < vfs->count.file && content != NULL) {
@@ -260,9 +260,9 @@ int vfs_file_delete(const char *filename, VirtualFileSystem *vfs)
 char *vfs_file_get_metadata(const char *filename, VirtualFileSystem *vfs)
 {
 
-    int file_index = vfs_file_get_index(filename, vfs);
+    unsigned int file_index = vfs_file_get_index(filename, vfs);
 
-    if (file_index >= 0 && file_index < vfs->count.file) {
+    if (file_index < vfs->count.file) {
         unsigned int i = file_index;
 
         const char *create_date = vfs->file[i].metadata.create_date

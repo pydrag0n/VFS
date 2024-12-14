@@ -1,5 +1,2 @@
-.vscode
-test.exe
-vfs_img.bin
-test2.exe
-vfs_cli.exe
+.vscode/
+out/

@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "src/include/vfs.h"
+#include "include/vfs.h"
+
 // beta (example)
 int main() {
     VirtualFileSystem vfs;
-    vfs_init("vfs_logs.log", &vfs);
+    vfs_init("out/vfs_logs.log", &vfs);
 
     while (1) {
         printf("VFS> ");
