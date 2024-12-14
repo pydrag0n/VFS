@@ -4,6 +4,8 @@
 #define MAX_FILES           1024
 #define MAX_USERS           64
 #define DEFAULT_FILE_SIZE   0
+#define MAX_DIRS            1024
+
 
 // struct / typedef
 
@@ -18,9 +20,16 @@ typedef struct VFSAPI_META_DATA {
     char *change_date;
     char *open_date;
     long size;
-
     int permission;
 } metadata;
+
+typedef struct VFSAPI_DIR {
+    char *name;
+    struct VFSAPI_DIR **subdirs;
+    unsigned int subdir_count;
+    struct VFSAPI_FILE **files;
+    unsigned int file_count;
+} vfsDir;
 
 typedef struct VFSAPI_FILE {
     metadata metadata;
@@ -31,11 +40,14 @@ typedef struct VFSAPI_FILE {
 typedef struct VFSAPI_COUNTER {
     unsigned int file;
     unsigned int user;
+    unsigned int dir;
 } counter;
 
 typedef struct VFSAPI {
     user user[MAX_USERS];
     vfsFile file[MAX_FILES];
+    vfsDir *root_dir;
+    vfsDir *current_dir;
     counter count;
 } VirtualFileSystem;
 
