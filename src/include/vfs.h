@@ -19,10 +19,7 @@ typedef struct VFSAPI_META_DATA {
     char *open_date;
     long size;
 
-    int permission;    // 1 only-read \
-                            2 Read and write \
-                            3 Read, write, and delete \
-                            4  Administrative
+    int permission;
 } metadata;
 
 typedef struct VFSAPI_FILE {

@@ -4,7 +4,7 @@
 #include <time.h>
 
 #include "include/vfs.h"
-#include "include/logger/logger.h"
+#include "logger/logger.h"
 
 int vfs_user_get_index(const char *username, VirtualFileSystem *vfs)
 {

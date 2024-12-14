@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "src/include/vfs.h"
-
+// beta (example)
 int main() {
     VirtualFileSystem vfs;
     vfs_init("vfs_logs.log", &vfs);
@@ -144,7 +144,7 @@ int main() {
         } else if (strcmp(token, "set_main_user") == 0) {
             token = strtok(NULL, " ");
             if (token != NULL) {
-                int user_index = atoi(token);
+                int user_index = vfs_user_get_index(token, &vfs);
                 vfs_set_main_user(user_index);
             } else {
                 printf("Error: user index required\n");

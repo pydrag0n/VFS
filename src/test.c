@@ -11,7 +11,7 @@ int main() {
 
     start_time = clock();
     VirtualFileSystem vfs;
-    vfs_init(&vfs);
+    vfs_init("logs.log", &vfs);
 
     // Test vfs_user_create
     vfs_user_create("user1", "1234qwerty", READ_WRITE, &vfs);

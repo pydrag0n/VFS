@@ -8,15 +8,3 @@
 2024-12-11 00:27:38 [INFO] src/file.c:117 File created: testfile2.txt
 2024-12-11 00:27:38 [INFO] src/file.c:145 File read: testfile1.txt
 2024-12-11 00:27:38 [INFO] src/file.c:145 File read: testfile2.txt
-
-2024-12-11 19:54:36 [INFO] src/user.c:56 user created root
-2024-12-11 19:55:19 [INFO] src/file.c:127 File created: file.txt
-2024-12-11 19:56:21 [INFO] src/file.c:155 File read: file.txt
-2024-12-11 19:56:53 [INFO] src/file.c:127 File created: conf.cfg
-2024-12-11 19:57:34 [INFO] src/user.c:56 user created abc
-2024-12-11 19:58:28 [INFO] src/file.c:155 File read: conf.cfg
-2024-12-11 19:58:44 [INFO] src/user.c:66 Authentication passed abc
-2024-12-11 19:58:48 [INFO] src/file.c:155 File read: conf.cfg
-2024-12-11 20:05:03 [INFO] src/user.c:56 user created root
-2024-12-11 20:05:14 [INFO] src/file.c:127 File created: config.cfg
-2024-12-11 20:06:31 [INFO] src/file.c:155 File read: config.cfg
