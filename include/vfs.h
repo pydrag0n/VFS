@@ -64,6 +64,7 @@ int vfs_file_write(const char *filename, const char *content, char mode, Virtual
 char *vfs_file_read(const char *filename, VirtualFileSystem *vfs);
 int vfs_file_delete(const char *filename, VirtualFileSystem *vfs);
 int vfs_file_set_permission(const char *filename, int permission, VirtualFileSystem *vfs);
+int vfs_file_change_name(const char *old_filename, const char *new_filename, VirtualFileSystem *vfs);
 
 int vfs_file_get_index(const char *filename, VirtualFileSystem *vfs);
 long vfs_file_get_size(unsigned int file_index, VirtualFileSystem *vfs);

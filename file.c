@@ -324,3 +324,17 @@ int vfs_file_set_permission(const char *filename, int permission, VirtualFileSys
     }
     return -1;
 }
+
+int vfs_file_change_name(const char *old_filename, const char *new_filename, VirtualFileSystem *vfs)
+{
+    int file_index = vfs_file_get_index(old_filename, vfs);
+    if (vfs_file_get_index(old_filename, vfs) < 0) {
+        log_error("File not found");
+        return -1;
+    }
+    strcpy(vfs->file[file_index].name, new_filename);
+    char msg[120];
+    sprintf(msg, "File name changed (%s -> %s)", old_filename, new_filename);
+    log_info(msg);
+    return 0;
+}

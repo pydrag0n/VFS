@@ -30,6 +30,7 @@ int main() {
     // Test vfs_file_create
     const char* filename1 = "testfile1.txt";
     const char* filename2 = "testfile2.txt";
+    const char* filename3 = "testfile3.txt";
     int result = vfs_file_create(filename1, &vfs);
 
     if (result != 0) {
@@ -42,12 +43,18 @@ int main() {
         printf("Failed to create file %s\n", filename2);
         return -1;
     }
+    result = vfs_file_create(filename3, &vfs);
+    if (result != 0) {
+        printf("Failed to create file %s\n", filename3);
+        return -1;
+    }
 
     // Test vfs_file_get_index
     int file_index1 = vfs_file_get_index(filename1, &vfs);
     int file_index2 = vfs_file_get_index(filename2, &vfs);
+    int file_index3 = vfs_file_get_index(filename3, &vfs);
 
-    if (file_index1 < 0 || file_index2 < 0) {
+    if (file_index1 < 0 || file_index2 < 0 || file_index3 < 0) {
         printf("Failed to get file index\n");
         return -1;
     }
@@ -55,8 +62,9 @@ int main() {
     // Test vfs_file_get_name
     char* name1 = vfs_file_get_name(file_index1, &vfs);
     char* name2 = vfs_file_get_name(file_index2, &vfs);
+    char* name3 = vfs_file_get_name(file_index3, &vfs);
 
-    if (strcmp(name1, filename1) != 0 || strcmp(name2, filename2) != 0) {
+    if (strcmp(name1, filename1) != 0 || strcmp(name2, filename2) != 0 || strcmp(name3, filename3) != 0) {
         printf("Failed to get file name\n");
         return -1;
     }
@@ -119,6 +127,16 @@ int main() {
     }
     printf("Content of %s: %s\n", filename1, content_read1);
     printf("Content of %s: %s\n", filename2, content_read2);
+
+    // Test vfs_file_change_name
+    vfs_file_change_name(filename3, "f3", &vfs);
+    char* changed_name3 = vfs_file_get_name(vfs_file_get_index("f3", &vfs), &vfs);
+
+    if (strcmp(changed_name3, "f3") != 0) {
+        printf("Failed to get file name\n");
+        return -1;
+    }
+
 
     // Test vfs_file_write in append mode
     const char* append_content = " Appended content";
